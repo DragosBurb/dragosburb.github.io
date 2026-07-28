@@ -169,20 +169,44 @@
   }
   .clip-link:hover{ border-color:var(--accent); color:var(--text); }
 
-  /* ---------- EMBEDDED VIDEO PREVIEWS ---------- */
+  /* ---------- VIDEO PREVIEW CARDS (click-through) ---------- */
   .video-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-    gap:12px; margin-top:16px;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+    gap:10px; margin-top:16px;
   }
   .video-card{
-    position:relative; border:1px solid var(--line); border-radius:var(--radius);
-    overflow:hidden; background:#000; aspect-ratio:9/16;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    aspect-ratio:1/1; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface-hi); text-decoration:none; padding:12px;
+    transition:border-color .2s, transform .2s, background .2s;
   }
-  .video-card.wide{ aspect-ratio:16/9; grid-column:1 / -1; max-width:480px; }
-  .video-card iframe{ width:100%; height:100%; border:0; display:block; }
+  .video-card:hover{ border-color:var(--accent); transform:translateY(-3px); background:#262b32; }
+  .video-card .play{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex:none;
+    transition:border-color .2s, background .2s;
+  }
+  .video-card .play svg{ width:13px; height:13px; stroke:var(--text-dim); transition:stroke .2s; }
+  .video-card:hover .play{ border-color:var(--accent); background:var(--accent); }
+  .video-card:hover .play svg{ stroke:#fff; }
+  .video-card .vc-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-dim);
+    letter-spacing:.06em; text-align:center; line-height:1.4;
+  }
+  .video-card.wide{
+    aspect-ratio:auto; flex-direction:row; justify-content:flex-start; gap:16px;
+    padding:20px 24px; max-width:440px; grid-column:1 / -1;
+  }
+  .video-card.wide .play{ width:44px; height:44px; }
+  .video-card.wide .play svg{ width:16px; height:16px; }
+  .video-card.wide .vc-title{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:700; font-size:17px;
+    text-transform:uppercase; color:var(--text); text-align:left;
+  }
+  .video-card.wide .vc-label{ text-align:left; margin-top:4px; }
 
   @media (max-width:640px){
-    .video-grid{ grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); }
+    .video-grid{ grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); }
   }
 
   @media (max-width:640px){
@@ -242,9 +266,9 @@
     <div class="rec"><span class="rec-dot"></span> DISPONIBIL PENTRU PROIECTE</div>
     <h1 class="name">Dragoș<br>Burbulea</h1>
     <div class="role">Producător &amp; Editor Video <span>/</span> Fondator BLG HUB</div>
-    <p class="hero-desc">Filmez și montez conținut short-form și long-form din Chișinău — de la reels și evenimente esports până la scurtmetraje proprii. DaVinci Resolve, Photoshop, și o cameră mereu pregătită.</p>
+    <p class="hero-desc">Filmez cu cameră și echipament profesional. Filmez și montez conținut short și long-form în Chișinău și în toată Moldova.</p>
     <div class="hero-meta">
-      <a href="mailto:dragos.burbulea2006@gmail.com">dragos.burbulea2006@gmail.com</a>
+      <a href="mailto:burbuleadragos2006@gmail.com">burbuleadragos2006@gmail.com</a>
       <a href="tel:+37378690720">+373 78 690 720</a>
       <span>Chișinău, Moldova</span>
     </div>
@@ -275,10 +299,22 @@
             <div class="clip-role">FOOD CONTENT · 2026</div>
             <p class="clip-desc">Peste 8 reels-uri filmate și editate pentru una dintre cele mai populare creatoare de conținut din domeniul rețetelor de mâncare din Moldova.</p>
             <div class="video-grid">
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DVbcvPiCGGT/embed" loading="lazy"></iframe></div>
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DV3gGl4CL8j/embed" loading="lazy"></iframe></div>
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DW1tZKDCJaK/embed" loading="lazy"></iframe></div>
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DW8xxQLiMvu/embed" loading="lazy"></iframe></div>
+              <a class="video-card" href="https://www.instagram.com/reel/DVbcvPiCGGT/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DV3gGl4CL8j/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DW1tZKDCJaK/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 03</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DW8xxQLiMvu/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 04</span>
+              </a>
             </div>
           </div>
         </div>
@@ -290,9 +326,18 @@
             <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
             <p class="clip-desc">Conținut video realizat pentru izi.play.md.</p>
             <div class="video-grid">
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7643518918199577874" loading="lazy" allow="encrypted-media"></iframe></div>
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7643860826423594258" loading="lazy" allow="encrypted-media"></iframe></div>
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7584180299395894540" loading="lazy" allow="encrypted-media"></iframe></div>
+              <a class="video-card" href="https://www.tiktok.com/@izi.play.md/video/7643518918199577874" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 01</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@izi.play.md/video/7643860826423594258" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 02</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@izi.play.md/video/7584180299395894540" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 03</span>
+              </a>
             </div>
           </div>
         </div>
@@ -304,8 +349,14 @@
             <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
             <p class="clip-desc">Conținut video pentru o colaborare cu un service de detailing auto.</p>
             <div class="video-grid">
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DbGRFCtMDPj/embed" loading="lazy"></iframe></div>
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DbN9-NLs9Xj/embed" loading="lazy"></iframe></div>
+              <a class="video-card" href="https://www.instagram.com/reel/DbGRFCtMDPj/?igsh=MWRzcXFlaXQyM29xNQ==" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DbN9-NLs9Xj/?igsh=M2hudDhibzZ2YW93" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
             </div>
           </div>
         </div>
@@ -317,7 +368,10 @@
             <div class="clip-role">EDITOR VIDEO · 2026</div>
             <p class="clip-desc">Material video realizat independent pentru un client.</p>
             <div class="video-grid">
-              <div class="video-card"><iframe src="https://www.instagram.com/reel/DakW9dxsMDr/embed" loading="lazy"></iframe></div>
+              <a class="video-card" href="https://www.instagram.com/p/DakW9dxsMDr/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VEZI PROIECTUL</span>
+              </a>
             </div>
           </div>
         </div>
@@ -337,10 +391,22 @@
             <div class="clip-role">FILMARE &amp; MONTAJ · NOV 2025 – FEB 2026</div>
             <p class="clip-desc">Peste 150 de materiale video short-form pentru una dintre cele mai cunoscute echipe de creare de conținut din Moldova, cu ritm săptămânal constant.</p>
             <div class="video-grid">
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7604423634765106439" loading="lazy" allow="encrypted-media"></iframe></div>
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7584918531418885387" loading="lazy" allow="encrypted-media"></iframe></div>
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7576719120490597643" loading="lazy" allow="encrypted-media"></iframe></div>
-              <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7577092686482656524" loading="lazy" allow="encrypted-media"></iframe></div>
+              <a class="video-card" href="https://www.tiktok.com/@bancadebancuri/video/7604423634765106439" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 01</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@bancadebancuri/video/7584918531418885387" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 02</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@liaflor_angro.md/video/7576719120490597643" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 03</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@totalasig/video/7577092686482656524" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 04</span>
+              </a>
             </div>
           </div>
         </div>
@@ -359,9 +425,13 @@
             <div class="clip-role">CO-REGIZOR / CAMERAMAN PRINCIPAL · 2026</div>
             <p class="clip-desc">Proiect propriu, de la scenariu la montaj final. Am co-regizat și am filmat ca operator principal, publicat pe YouTube.</p>
             <div class="video-grid">
-              <div class="video-card wide">
-                <iframe src="https://www.youtube.com/embed/o74PSwZ992M" title="Vinu-i de vină" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
+              <a class="video-card wide" href="https://www.youtube.com/watch?v=o74PSwZ992M&t=69s" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <div>
+                  <div class="vc-title">Vinu-i de vină</div>
+                  <div class="vc-label">YOUTUBE · SCURTMETRAJ</div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
@@ -380,9 +450,18 @@
           <div class="stat"><b>400K+</b><span>VIZIONĂRI TIKTOK</span></div>
         </div>
         <div class="video-grid" style="margin-top:24px;">
-          <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7570714143565663500" loading="lazy" allow="encrypted-media"></iframe></div>
-          <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7639392755524832519" loading="lazy" allow="encrypted-media"></iframe></div>
-          <div class="video-card"><iframe src="https://www.tiktok.com/embed/v2/7565942527988190476" loading="lazy" allow="encrypted-media"></iframe></div>
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7570714143565663500" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 01</span>
+          </a>
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7639392755524832519" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 02</span>
+          </a>
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7565942527988190476" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 03</span>
+          </a>
         </div>
       </div>
     </section>
@@ -423,7 +502,7 @@
     <h2 style="margin:0 auto;">Hai să lucrăm la ceva</h2>
     <p class="lede" style="margin:0 auto; text-align:center;">Deschis pentru colaborări de filmare, montaj și producție de evenimente.</p>
     <div class="contact-links">
-      <a href="mailto:dragos.burbulea2006@gmail.com">Email →</a>
+      <a href="mailto:burbuleadragos2006@gmail.com">Email →</a>
       <a href="tel:+37378690720">Telefon →</a>
       <a href="https://www.linkedin.com/in/dragos-burbulea-8a6843319/" target="_blank">LinkedIn →</a>
       <a href="https://www.instagram.com/dragosburbulea/?hl=en" target="_blank">Instagram →</a>
