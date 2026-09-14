@@ -209,6 +209,27 @@
     .video-grid{ grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); }
   }
 
+  /* ---------- SPORTS PHOTO GRID ---------- */
+  .photo-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px; margin-top:8px;
+  }
+  .photo-card{
+    display:block; border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; aspect-ratio:2/3; position:relative;
+  }
+  .photo-card img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(15%) contrast(1.05);
+    transition:transform .4s ease, filter .4s ease;
+  }
+  .photo-card:hover img{ transform:scale(1.04); filter:grayscale(0%) contrast(1.05); }
+  .photo-card::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    box-shadow:inset 0 0 0 1px transparent; transition:box-shadow .25s;
+  }
+  .photo-card:hover::after{ box-shadow:inset 0 0 0 1px var(--accent); }
+
   @media (max-width:640px){
     .clip{ grid-template-columns:1fr; }
     .clip-tc{ border-right:none; border-bottom:1px solid var(--line); padding-right:0; padding-bottom:14px; flex-direction:row; gap:16px; }
@@ -280,8 +301,9 @@
       <li><a href="#productie"><span class="tc">00:02</span>Producție Video</a></li>
       <li><a href="#scurtmetraj"><span class="tc">00:03</span>Scurtmetraj</a></li>
       <li><a href="#evenimente"><span class="tc">00:04</span>BLG HUB</a></li>
-      <li><a href="#competente"><span class="tc">00:05</span>Competențe</a></li>
-      <li><a href="#contact"><span class="tc">00:06</span>Contact</a></li>
+      <li><a href="#sportphoto"><span class="tc">00:05</span>Sports Photo</a></li>
+      <li><a href="#competente"><span class="tc">00:06</span>Competențe</a></li>
+      <li><a href="#contact"><span class="tc">00:07</span>Contact</a></li>
     </ul>
   </nav>
 
@@ -291,6 +313,40 @@
       <div class="wrap" style="padding:0;">
         <div class="eyebrow">Proiecte / 00:01</div>
         <h2>Colaborări Freelance</h2>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:35:00</div>
+          <div>
+            <div class="clip-title">Real Sireți — Superliga Moldovei</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Conținut video realizat pentru clubul de fotbal Real Sireți, din Superliga Moldovei.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/DdQmPN8tDOq/?stkn=MTU3amV5bjgzcGRs" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VEZI CLIPUL</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:40:00</div>
+          <div>
+            <div class="clip-title">Detailing Auto</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Conținut video pentru o colaborare cu un service de detailing auto.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/DbGRFCtMDPj/?igsh=MWRzcXFlaXQyM29xNQ==" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DbN9-NLs9Xj/?igsh=M2hudDhibzZ2YW93" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
         <div class="clip">
           <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:45:00</div>
@@ -314,25 +370,6 @@
               <a class="video-card" href="https://www.instagram.com/reel/DW8xxQLiMvu/?hl=en" target="_blank" rel="noopener">
                 <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
                 <span class="vc-label">REEL 04</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="clip">
-          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:40:00</div>
-          <div>
-            <div class="clip-title">Detailing Auto</div>
-            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
-            <p class="clip-desc">Conținut video pentru o colaborare cu un service de detailing auto.</p>
-            <div class="video-grid">
-              <a class="video-card" href="https://www.instagram.com/reel/DbGRFCtMDPj/?igsh=MWRzcXFlaXQyM29xNQ==" target="_blank" rel="noopener">
-                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
-                <span class="vc-label">REEL 01</span>
-              </a>
-              <a class="video-card" href="https://www.instagram.com/reel/DbN9-NLs9Xj/?igsh=M2hudDhibzZ2YW93" target="_blank" rel="noopener">
-                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
-                <span class="vc-label">REEL 02</span>
               </a>
             </div>
           </div>
@@ -491,9 +528,31 @@
       </div>
     </section>
 
+    <section id="sportphoto" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Proiecte / 00:05</div>
+        <h2>Sports Photo</h2>
+        <p class="lede">Câteva exemple de fotografie sportivă, din teren — momente surprinse la meciuri din Superliga Moldovei.</p>
+        <div class="photo-grid">
+          <a class="photo-card" href="images/sport-01.jpg" target="_blank" rel="noopener">
+            <img src="images/sport-01.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="images/sport-02.jpg" target="_blank" rel="noopener">
+            <img src="images/sport-02.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="images/sport-03.jpg" target="_blank" rel="noopener">
+            <img src="images/sport-03.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="images/sport-04.jpg" target="_blank" rel="noopener">
+            <img src="images/sport-04.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </section>
+
     <section id="competente" class="reveal">
       <div class="wrap" style="padding:0;">
-        <div class="eyebrow">Toolkit / 00:05</div>
+        <div class="eyebrow">Toolkit / 00:06</div>
         <h2>Competențe</h2>
         <div class="panel">
           <div class="panel-row">
@@ -523,7 +582,7 @@
   </main>
 
   <footer id="contact" class="reveal">
-    <div class="eyebrow" style="justify-content:center;">00:06 — Contact</div>
+    <div class="eyebrow" style="justify-content:center;">00:07 — Contact</div>
     <h2 style="margin:0 auto;">Hai să lucrăm la ceva</h2>
     <p class="lede" style="margin:0 auto; text-align:center;">Deschis pentru colaborări de filmare, montaj și producție de evenimente.</p>
     <div class="contact-links">
