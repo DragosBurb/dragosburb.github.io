@@ -18,7 +18,7 @@
     --accent: #e8432f;
     --accent-dim: #7a2a20;
     --amber: #f0b429;
-    --radius: 4px;
+    --radius: 3px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -30,262 +30,624 @@
     overflow-x:hidden;
   }
   ::selection{ background:var(--accent); color:#fff; }
-  a{ color:inherit; text-decoration:none; }
+  a{ color:inherit; }
+
   .mono{ font-family:'IBM Plex Mono', monospace; }
 
-  .wrap{ max-width:1100px; margin:0 auto; padding:0 32px; }
+  /* scroll progress = timeline scrubber */
+  .scrubber{
+    position:fixed; top:0; left:0; height:3px; width:100%;
+    background:var(--line); z-index:100;
+  }
+  .scrubber-fill{
+    height:100%; width:0%; background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+    transition:width .08s linear;
+  }
 
-  /* ---------- GATEWAY (FRONT PAGE SELECTOR) ---------- */
-  header.gateway{
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 60px 32px;
-    border-bottom: 1px solid var(--line);
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 32px; }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:120px 32px 80px;
+    border-bottom:1px solid var(--line);
+    position:relative;
   }
   .rec{
     display:inline-flex; align-items:center; gap:8px;
     font-family:'IBM Plex Mono', monospace; font-size:12px;
     letter-spacing:.12em; color:var(--accent);
     border:1px solid var(--accent-dim); border-radius:999px;
-    padding:6px 14px; margin-bottom:24px; width: fit-content;
+    padding:6px 14px; margin-bottom:28px;
   }
-  .rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 1.6s infinite; }
+  .rec-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--accent);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
   @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
 
   h1.name{
     font-family:'Big Shoulders Display', sans-serif;
     font-weight:900;
-    font-size:clamp(48px, 8vw, 96px);
+    font-size:clamp(52px, 9vw, 110px);
     line-height:.92;
+    letter-spacing:-.01em;
     text-transform:uppercase;
-    margin-bottom: 12px;
+    color:var(--text);
   }
-  .gateway-subtitle{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 14px;
-    color: var(--text-dim);
-    margin-bottom: 40px;
-    letter-spacing: .04em;
-  }
-
-  .gateway-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    max-width: 900px;
-  }
-  .gateway-card{
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 24px;
-    cursor: pointer;
-    transition: all .25s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 140px;
-  }
-  .gateway-card:hover{
-    border-color: var(--accent);
-    background: var(--surface-hi);
-    transform: translateY(-4px);
-  }
-  .gateway-card .gc-code{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); }
-  .gateway-card .gc-title{
+  .role{
     font-family:'Big Shoulders Display', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-top: 16px;
-    line-height: 1.1;
+    font-weight:600;
+    font-size:clamp(18px, 2.4vw, 26px);
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-top:8px;
   }
-
-  /* ---------- MAIN CONTENT AREA ---------- */
-  main{ display: none; }
-  main.active{ display: block; }
-
-  nav.subbar{
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(20,22,26,.95); backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line);
-    padding: 16px 32px;
-    display: flex; justify-content: space-between; align-items:center;
+  .role span{ color:var(--accent); }
+  .hero-desc{
+    max-width:560px; margin-top:28px; color:var(--text-dim); font-size:16px;
   }
-  .back-btn{
-    font-family:'IBM Plex Mono', monospace; font-size: 12px;
-    color: var(--accent); cursor: pointer; display: flex; align-items: center; gap: 6px;
+  .hero-meta{
+    display:flex; gap:28px; flex-wrap:wrap; margin-top:36px;
+    font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--text-dim);
   }
-  .current-filter{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+  .hero-meta a{ text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; transition:border-color .2s, color .2s; }
+  .hero-meta a:hover{ color:var(--text); border-color:var(--accent); }
 
-  section{ padding: 80px 32px; border-bottom: 1px solid var(--line); }
+  /* ---------- TIMELINE NAV ---------- */
+  nav.timeline{
+    position:sticky; top:3px; z-index:50;
+    background:rgba(20,22,26,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.timeline ul{
+    list-style:none; display:flex; overflow-x:auto;
+    max-width:1040px; margin:0 auto; padding:0 32px;
+  }
+  nav.timeline li{ flex:none; }
+  nav.timeline a{
+    display:block; padding:16px 18px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    text-decoration:none; color:var(--text-dim);
+    letter-spacing:.06em; white-space:nowrap;
+    border-bottom:2px solid transparent;
+    transition:color .2s, border-color .2s;
+  }
+  nav.timeline a:hover, nav.timeline a.active{ color:var(--text); border-color:var(--accent); }
+  nav.timeline a .tc{ color:var(--accent); margin-right:8px; }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:90px 32px; border-bottom:1px solid var(--line); }
+  section.tight{ padding-top:70px; }
   .eyebrow{
-    font-family:'IBM Plex Mono', monospace; font-size: 12px; letter-spacing:.14em;
-    color: var(--accent); text-transform: uppercase; margin-bottom: 12px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
   }
+  .eyebrow::after{ content:''; height:1px; flex:1; background:var(--line); }
   h2{
-    font-family:'Big Shoulders Display', sans-serif; font-weight: 700; text-transform: uppercase;
-    font-size: clamp(28px, 3.5vw, 42px); margin-bottom: 32px;
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:700; text-transform:uppercase;
+    font-size:clamp(30px, 4vw, 46px);
+    letter-spacing:-.01em;
+    margin-bottom:36px;
+    max-width:720px;
   }
 
-  /* ---------- NEW HERO REEL + SECONDARY LAYOUT ---------- */
-  .project-showcase{
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 24px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 24px;
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  p.lede{ max-width:640px; color:var(--text-dim); font-size:17px; }
+
+  /* ---------- PROJECT CLIPS ---------- */
+  .clip{
+    display:grid; grid-template-columns:120px 1fr; gap:24px;
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface);
+    padding:26px 26px; margin-bottom:18px;
+    transition:border-color .25s, background .25s, transform .25s;
   }
-  @media(max-width: 850px){
-    .project-showcase{ grid-template-columns: 1fr; }
+  .clip:hover{ border-color:var(--accent-dim); background:var(--surface-hi); transform:translateX(4px); }
+  .clip-tc{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text-dim);
+    border-right:1px solid var(--line); padding-right:20px;
+    display:flex; flex-direction:column; justify-content:center; gap:6px;
+  }
+  .clip-tc b{ color:var(--amber); font-weight:500; display:block; }
+  .clip-title{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:700;
+    font-size:22px; text-transform:uppercase; letter-spacing:.01em;
+  }
+  .clip-role{ color:var(--accent); font-size:13px; font-family:'IBM Plex Mono',monospace; margin:6px 0 12px; }
+  .clip-desc{ color:var(--text-dim); font-size:15px; max-width:560px; }
+  .clip-link{
+    display:inline-block; margin-top:14px; font-size:13px;
+    font-family:'IBM Plex Mono', monospace; color:var(--text-dim);
+    border:1px dashed var(--line); border-radius:999px; padding:6px 14px;
+    text-decoration:none;
+  }
+  .clip-link:hover{ border-color:var(--accent); color:var(--text); }
+
+  /* ---------- VIDEO PREVIEW CARDS (click-through) ---------- */
+  .video-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+    gap:10px; margin-top:16px;
+  }
+  .video-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    aspect-ratio:1/1; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface-hi); text-decoration:none; padding:12px;
+    transition:border-color .2s, transform .2s, background .2s;
+  }
+  .video-card:hover{ border-color:var(--accent); transform:translateY(-3px); background:#262b32; }
+  .video-card .play{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex:none;
+    transition:border-color .2s, background .2s;
+  }
+  .video-card .play svg{ width:13px; height:13px; stroke:var(--text-dim); transition:stroke .2s; }
+  .video-card:hover .play{ border-color:var(--accent); background:var(--accent); }
+  .video-card:hover .play svg{ stroke:#fff; }
+  .video-card .vc-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-dim);
+    letter-spacing:.06em; text-align:center; line-height:1.4;
+  }
+  .video-card.wide{
+    aspect-ratio:auto; flex-direction:row; justify-content:flex-start; gap:16px;
+    padding:20px 24px; max-width:440px; grid-column:1 / -1;
+  }
+  .video-card.wide .play{ width:44px; height:44px; }
+  .video-card.wide .play svg{ width:16px; height:16px; }
+  .video-card.wide .vc-title{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:700; font-size:17px;
+    text-transform:uppercase; color:var(--text); text-align:left;
+  }
+  .video-card.wide .vc-label{ text-align:left; margin-top:4px; }
+
+  @media (max-width:640px){
+    .video-grid{ grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); }
   }
 
-  .hero-reel-card{
-    background: var(--surface-hi);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    aspect-ratio: 9/16;
-    max-height: 520px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; overflow: hidden; text-align: center; padding: 20px;
+  /* ---------- SPORTS PHOTO GRID ---------- */
+  .photo-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px; margin-top:8px;
   }
-  .hero-badge{
-    position: absolute; top: 14px; left: 14px;
-    background: var(--accent); color: #fff; font-family:'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 2px;
-    letter-spacing: .08em;
+  .photo-card{
+    display:block; border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; aspect-ratio:2/3; position:relative;
   }
-  .play-btn{
-    width: 56px; height: 56px; border-radius: 50%; background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 20px rgba(232,67,47,0.4); transition: transform .2s;
+  .photo-card img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(15%) contrast(1.05);
+    transition:transform .4s ease, filter .4s ease;
   }
-  .hero-reel-card:hover .play-btn{ transform: scale(1.1); }
-  .play-btn svg{ width: 20px; height: 20px; stroke: #fff; fill: #fff; }
-  .hero-label{ font-family:'Big Shoulders Display', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; margin-top: 16px; }
+  .photo-card:hover img{ transform:scale(1.04); filter:grayscale(0%) contrast(1.05); }
+  .photo-card::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    box-shadow:inset 0 0 0 1px transparent; transition:box-shadow .25s;
+  }
+  .photo-card:hover::after{ box-shadow:inset 0 0 0 1px var(--accent); }
 
-  .project-info{ display: flex; flex-direction: column; justify-content: space-between; }
-  .project-title{ font-family:'Big Shoulders Display', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; line-height: 1.1; margin-bottom: 8px; }
-  .tags{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
-  .tag{ font-family:'IBM Plex Mono', monospace; font-size: 11px; background: var(--surface-hi); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; color: var(--text-dim); }
-  
-  .secondary-reels{ display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
-  .sec-reel-item{
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface-hi); border: 1px solid var(--line); padding: 10px 14px;
-    border-radius: var(--radius); font-family:'IBM Plex Mono', monospace; font-size: 12px;
-    transition: border-color .2s;
+  @media (max-width:640px){
+    .clip{ grid-template-columns:1fr; }
+    .clip-tc{ border-right:none; border-bottom:1px solid var(--line); padding-right:0; padding-bottom:14px; flex-direction:row; gap:16px; }
   }
-  .sec-reel-item:hover{ border-color: var(--accent); color: var(--text); }
-  .sec-reel-item span { color: var(--accent); }
 
-  footer{ padding: 60px 32px; text-align: center; font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--line); }
+  /* ---------- STATS (evenimente) ---------- */
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:8px; }
+  .stat{ background:var(--surface); padding:26px 20px; }
+  .stat b{
+    display:block; font-family:'Big Shoulders Display', sans-serif;
+    font-size:38px; color:var(--amber); font-weight:700; line-height:1;
+  }
+  .stat span{ font-size:12px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; letter-spacing:.04em; }
+
+  /* ---------- SKILLS ---------- */
+  .panel{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+    padding:28px;
+  }
+  .panel-row{ display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); }
+  .panel-row:last-child{ border-bottom:none; }
+  .panel-row .k{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text-dim); letter-spacing:.06em; text-transform:uppercase; }
+  .panel-row .v{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .tag{
+    font-size:13px; background:var(--surface-hi); border:1px solid var(--line);
+    border-radius:999px; padding:5px 12px; color:var(--text);
+  }
+
+  /* ---------- FOOTER / CONTACT ---------- */
+  footer{ padding:100px 32px 60px; text-align:center; }
+  footer h2{ margin:0 auto 20px; }
+  .contact-links{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
+  .contact-links a{
+    text-decoration:none; font-family:'IBM Plex Mono', monospace; font-size:13px;
+    border:1px solid var(--line); border-radius:999px; padding:12px 22px;
+    transition:border-color .2s, color .2s;
+  }
+  .contact-links a:hover{ border-color:var(--accent); color:var(--accent); }
+  .fine{ margin-top:60px; color:var(--text-dim); font-size:12px; font-family:'IBM Plex Mono',monospace; }
+
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ transition:none; opacity:1; transform:none; }
+    .rec-dot{ animation:none; }
+  }
 </style>
 </head>
 <body>
 
-  <!-- 1. PAGINA DE START / GATEWAY -->
-  <header class="gateway" id="gatewayView">
+  <div class="scrubber"><div class="scrubber-fill" id="scrubberFill"></div></div>
+
+  <header class="hero">
     <div class="rec"><span class="rec-dot"></span> DISPONIBIL PENTRU PROIECTE</div>
     <h1 class="name">Dragoș<br>Burbulea</h1>
-    <div class="gateway-subtitle">PRODUCĂTOR &amp; EDITOR VIDEO · CHIȘINĂU</div>
-    
-    <p style="font-family:'IBM Plex Mono',monospace; font-size: 13px; color:var(--text-dim); margin-bottom: 20px;">Alege categoria de interes pentru a vizualiza portofoliul:</p>
-    
-    <div class="gateway-grid">
-      <div class="gateway-card" onclick="selectCategory('business')">
-        <span class="gc-code">01 // CORPORATE</span>
-        <div class="gc-title">Brand &amp; Business</div>
-      </div>
-      <div class="gateway-card" onclick="selectCategory('creators')">
-        <span class="gc-code">02 // VIRAL &amp; ENTERTAINMENT</span>
-        <div class="gc-title">Creators &amp; Podcast</div>
-      </div>
-      <div class="gateway-card" onclick="selectCategory('sport')">
-        <span class="gc-code">03 // ACTION &amp; ESPORTS</span>
-        <div class="gc-title">Sport &amp; Evenimente</div>
-      </div>
-      <div class="gateway-card" onclick="selectCategory('cinematics')">
-        <span class="gc-code">04 // NARRATIVE</span>
-        <div class="gc-title">Cinematics &amp; Artă</div>
-      </div>
+    <div class="role">Producător &amp; Editor Video</div>
+    <p class="hero-desc">Filmez cu cameră și echipament profesional. Filmez și montez conținut short și long-form în Chișinău și în toată Moldova.</p>
+    <div class="hero-meta">
+      <a href="mailto:burbuleadragos2006@gmail.com">burbuleadragos2006@gmail.com</a>
+      <a href="tel:+37378690720">+373 78 690 720</a>
+      <span>Chișinău, Moldova</span>
     </div>
   </header>
 
-  <!-- 2. CONTINUTUL PRINCIPAL (Ascuns până la selecție) -->
-  <main id="mainPortfolio">
-    <nav class="subbar">
-      <div class="back-btn" onclick="goBackToGateway()">← Schimbă categoria</div>
-      <div class="current-filter" id="filterTitle">Categoria Selectată</div>
-    </nav>
+  <nav class="timeline">
+    <ul>
+      <li><a href="#freelance"><span class="tc">00:01</span>Freelance</a></li>
+      <li><a href="#productie"><span class="tc">00:02</span>Producție Video</a></li>
+      <li><a href="#sportphoto"><span class="tc">00:03</span>Sports Photography</a></li>
+      <li><a href="#scurtmetraj"><span class="tc">00:04</span>Scurtmetraj</a></li>
+      <li><a href="#evenimente"><span class="tc">00:05</span>BLG HUB</a></li>
+      <li><a href="#competente"><span class="tc">00:06</span>Competențe</a></li>
+      <li><a href="#contact"><span class="tc">00:07</span>Contact</a></li>
+    </ul>
+  </nav>
 
-    <!-- Exemplu Secțiune Business (Optibrok, Detailing, etc.) -->
-    <section id="sec-business" class="portfolio-section">
+  <main>
+
+    <section id="freelance" class="tight reveal">
       <div class="wrap" style="padding:0;">
-        <div class="eyebrow">Domeniu / Business &amp; Conversie</div>
-        <h2>Proiecte Comerciale</h2>
+        <div class="eyebrow">Proiecte / 00:01</div>
+        <h2>Colaborări Freelance</h2>
 
-        <div class="project-showcase">
-          <!-- Informații & Secundare -->
-          <div class="project-info">
-            <div>
-              <div class="project-title">Optibrok — Brokeraj</div>
-              <div class="tags">
-                <span class="tag">EDITOR VIDEO</span>
-                <span class="tag">REELS</span>
-                <span class="tag">2026</span>
-              </div>
-              <p style="color:var(--text-dim); font-size: 14px; margin-bottom: 20px;">Conținut short-form creat pentru compania de brokeraj, optimizat pentru generare de lead-uri și brand awareness.</p>
-            </div>
-            
-            <div>
-              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); margin-bottom:8px;">ALTE REELS DIN CAMPANIE:</div>
-              <div class="secondary-reels">
-                <a href="#" class="sec-reel-item">Reel 02 — Optimizare polițe <span>▶</span></a>
-                <a href="#" class="sec-reel-item">Reel 03 — Sfaturi șoferi <span>▶</span></a>
-              </div>
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:35:00</div>
+          <div>
+            <div class="clip-title">Real Sireți — Superliga Moldovei</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Conținut video realizat pentru clubul de fotbal Real Sireți, din Superliga Moldovei.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/DdQmPN8tDOq/?stkn=MTU3amV5bjgzcGRs" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DdoYFfctX1u/?exln=MTJ3OXA0Nm5hbDJ6Nw==" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
             </div>
           </div>
+        </div>
 
-          <!-- Reel Principal (Hero) -->
-          <a href="#" class="hero-reel-card">
-            <span class="hero-badge">REEL PRINCIPAL</span>
-            <div class="play-btn">
-              <svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:40:00</div>
+          <div>
+            <div class="clip-title">Optibrok</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Reels pentru Optibrok, companie de brokeraj.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/Dd6Ud2cOOWg/?psln=NG56dmszZmdicHM0" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DeZCkm5OSt2/?exln=NWc5eWp6YjViaDFy" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
             </div>
-            <div class="hero-label">Optibrok // Lansare Campanie</div>
-          </a>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:40:00</div>
+          <div>
+            <div class="clip-title">Detailing Auto</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Conținut video pentru o colaborare cu un service de detailing auto.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/DbGRFCtMDPj/?igsh=MWRzcXFlaXQyM29xNQ==" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DbN9-NLs9Xj/?igsh=M2hudDhibzZ2YW93" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:45:00</div>
+          <div>
+            <div class="clip-title">Colaborare cu Sabina Rusnac</div>
+            <div class="clip-role">FOOD CONTENT · 2026</div>
+            <p class="clip-desc">Peste 8 reels-uri filmate în domeniul rețelelor de mâncare.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/reel/DVbcvPiCGGT/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 01</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DV3gGl4CL8j/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 02</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DW1tZKDCJaK/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 03</span>
+              </a>
+              <a class="video-card" href="https://www.instagram.com/reel/DW8xxQLiMvu/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">REEL 04</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:50:00</div>
+          <div>
+            <div class="clip-title">izi.play.md</div>
+            <div class="clip-role">EDITOR VIDEO / CAMERAMAN · 2026</div>
+            <p class="clip-desc">Conținut video realizat pentru izi.play.md.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.tiktok.com/@izi.play.md/video/7643518918199577874" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 01</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@izi.play.md/video/7643860826423594258" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 02</span>
+              </a>
+              <a class="video-card" href="https://vt.tiktok.com/ZS4B8FyAq/" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 03</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:00:20:00</div>
+          <div>
+            <div class="clip-title">Proiect Freelance</div>
+            <div class="clip-role">EDITOR VIDEO · 2026</div>
+            <p class="clip-desc">Material video realizat independent pentru un client.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.instagram.com/p/DakW9dxsMDr/?hl=en" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VEZI PROIECTUL</span>
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Alte secțiuni similare pentru Creators, Sport, Cinematics... -->
+    <section id="productie" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Proiecte / 00:02</div>
+        <h2>Producție Video</h2>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>01:00:00:00</div>
+          <div>
+            <div class="clip-title">Podcast — Editor Video</div>
+            <div class="clip-role">MONTAJ LONG-FORM · 2026</div>
+            <p class="clip-desc">Montaj video pentru două episoade de podcast, publicate pe YouTube.</p>
+            <div class="video-grid">
+              <a class="video-card wide" href="https://youtu.be/Lin2EYQgvck?si=IHSqObj0afM3yTA_" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <div>
+                  <div class="vc-title">Episod 1</div>
+                  <div class="vc-label">YOUTUBE · PODCAST</div>
+                </div>
+              </a>
+              <a class="video-card wide" href="https://youtu.be/i97OmNFycdA?si=Yy69SzjXavBvNDso" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <div>
+                  <div class="vc-title">Episod 2</div>
+                  <div class="vc-label">YOUTUBE · PODCAST</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:02:30:00</div>
+          <div>
+            <div class="clip-title">Banca de Bancuri — Videograf</div>
+            <div class="clip-role">FILMARE &amp; MONTAJ · NOV 2025 – FEB 2026</div>
+            <p class="clip-desc">Peste 150 de materiale video short-form pentru una dintre cele mai cunoscute echipe de creare de conținut din Moldova, cu ritm săptămânal constant.</p>
+            <div class="video-grid">
+              <a class="video-card" href="https://www.tiktok.com/@bancadebancuri/video/7604423634765106439" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 01</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@bancadebancuri/video/7584918531418885387" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 02</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@liaflor_angro.md/video/7576719120490597643" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 03</span>
+              </a>
+              <a class="video-card" href="https://www.tiktok.com/@totalasig/video/7577092686482656524" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <span class="vc-label">VIDEO 04</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sportphoto" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Proiecte / 00:03</div>
+        <h2>Sports Photography</h2>
+        <p class="lede">Câteva exemple de fotografie sportivă, din teren — momente surprinse la meciuri din Superliga Moldovei.</p>
+        <div class="photo-grid">
+          <a class="photo-card" href="sport-01.jpg" target="_blank" rel="noopener">
+            <img src="sport-01.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="sport-02.jpg" target="_blank" rel="noopener">
+            <img src="sport-02.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="sport-03.jpg" target="_blank" rel="noopener">
+            <img src="sport-03.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+          <a class="photo-card" href="sport-04.jpg" target="_blank" rel="noopener">
+            <img src="sport-04.jpg" alt="Fotografie sportivă — fotbal, Superliga Moldovei" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="scurtmetraj" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Proiecte / 00:04</div>
+        <h2>Scurtmetraj Propriu</h2>
+
+        <div class="clip">
+          <div class="clip-tc">00:00:00:00<br><b>→</b><br>00:04:12:00</div>
+          <div>
+            <div class="clip-title">„Vinu-i de vină" — Scurtmetraj propriu</div>
+            <div class="clip-role">CO-REGIZOR / CAMERAMAN PRINCIPAL · 2026</div>
+            <p class="clip-desc">Proiect propriu, de la scenariu la montaj final. Am co-regizat și am filmat ca operator principal, publicat pe YouTube.</p>
+            <div class="video-grid">
+              <a class="video-card wide" href="https://www.youtube.com/watch?v=o74PSwZ992M&t=69s" target="_blank" rel="noopener">
+                <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+                <div>
+                  <div class="vc-title">Vinu-i de vină</div>
+                  <div class="vc-label">YOUTUBE · SCURTMETRAJ</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="evenimente" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Proiecte / 00:05</div>
+        <h2>BLG HUB — Evenimente Esports</h2>
+        <p class="lede">Fondator, Aug 2025 – Prezent. Peste 6 evenimente organizate până acum, printre care CS2 LAN, EA FC26 Offline, UFC Offline și Clash Royale Online.</p>
+        <div class="stats">
+          <div class="stat"><b>6+</b><span>EVENIMENTE ORGANIZATE</span></div>
+          <div class="stat"><b>400+</b><span>PARTICIPANȚI TOTAL</span></div>
+          <div class="stat"><b>1.200+</b><span>ABONAȚI TIKTOK</span></div>
+          <div class="stat"><b>400K+</b><span>VIZIONĂRI TIKTOK</span></div>
+        </div>
+        <div class="video-grid" style="margin-top:24px;">
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7570714143565663500" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 01</span>
+          </a>
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7639392755524832519" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 02</span>
+          </a>
+          <a class="video-card" href="https://www.tiktok.com/@blghub.md/video/7565942527988190476" target="_blank" rel="noopener">
+            <span class="play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
+            <span class="vc-label">RECAP 03</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="competente" class="reveal">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">Toolkit / 00:06</div>
+        <h2>Competențe</h2>
+        <div class="panel">
+          <div class="panel-row">
+            <div class="k">Montaj</div>
+            <div class="v"><span class="tag">DaVinci Resolve</span></div>
+          </div>
+          <div class="panel-row">
+            <div class="k">Grafică</div>
+            <div class="v"><span class="tag">Photoshop</span></div>
+          </div>
+          <div class="panel-row">
+            <div class="k">Format</div>
+            <div class="v"><span class="tag">Short-form</span><span class="tag">Long-form</span></div>
+          </div>
+          <div class="panel-row">
+            <div class="k">Producție</div>
+            <div class="v"><span class="tag">Regie</span><span class="tag">Filmare</span><span class="tag">Planificare Evenimente</span></div>
+          </div>
+          <div class="panel-row">
+            <div class="k">Digital</div>
+            <div class="v"><span class="tag">Social Media Management</span><span class="tag">Marketing Esports</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
-    CHIȘINĂU, MOLDOVA · DRAGOȘ BURBULEA 2026
+  <footer id="contact" class="reveal">
+    <div class="eyebrow" style="justify-content:center;">00:07 — Contact</div>
+    <h2 style="margin:0 auto;">Hai să lucrăm la ceva</h2>
+    <p class="lede" style="margin:0 auto; text-align:center;">Deschis pentru colaborări de filmare, montaj și producție de evenimente.</p>
+    <div class="contact-links">
+      <a href="mailto:burbuleadragos2006@gmail.com">Email →</a>
+      <a href="tel:+37378690720">Telefon →</a>
+      <a href="https://www.linkedin.com/in/dragos-burbulea-8a6843319/" target="_blank">LinkedIn →</a>
+      <a href="https://www.instagram.com/dragosburbulea/?hl=en" target="_blank">Instagram →</a>
+    </div>
+    <div class="fine mono">CHIȘINĂU, MOLDOVA · ACTUALIZAT 2026</div>
   </footer>
 
 <script>
-  function selectCategory(category) {
-    document.getElementById('gatewayView').style.display = 'none';
-    document.main = document.getElementById('mainPortfolio');
-    document.main.classList.add('active');
-    document.getElementById('filterTitle').innerText = 'Afișez: ' + category.toUpperCase();
-    window.scrollTo(0,0);
+  // scroll progress fill
+  const fill = document.getElementById('scrubberFill');
+  function updateScrubber(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    fill.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
   }
+  document.addEventListener('scroll', updateScrubber);
+  updateScrubber();
 
-  function goBackToGateway() {
-    document.getElementById('mainPortfolio').classList.remove('active');
-    document.getElementById('gatewayView').style.display = 'flex';
-    window.scrollTo(0,0);
-  }
+  // reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // active nav highlight
+  const navLinks = document.querySelectorAll('nav.timeline a');
+  const sections = [...navLinks].map(a=>document.querySelector(a.getAttribute('href')));
+  const navIo = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const idx = sections.indexOf(entry.target);
+      if(entry.isIntersecting && idx>-1){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        navLinks[idx].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s=> s && navIo.observe(s));
 </script>
 
 </body>
